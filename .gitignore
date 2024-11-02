@@ -1,0 +1,13 @@
+pcdet.egg-info/
+build/
+*.pcd
+*/__pycache__/*
+__pycache__/*
+__pycache__/
+*.pyc
+wandb/
+*/.ipynb_checkpoints/*
+.ipynb_checkpoints/
+datasets/
+output/
+work_dir/
