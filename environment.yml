@@ -1,0 +1,20 @@
+name: dna
+channels:
+  - defaults
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.8
+  - pytorch=2.0.1
+  - torchvision=0.15.2
+  - torchaudio=2.0.2
+  - cudatoolkit=11.8
+  - llvmlite
+  - numba
+  - opencv
+  - tqdm
+  - pyquaternion
+  - open3d
+  - mayavi
+  - pip:
+      - -r requirements.txt
