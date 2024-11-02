@@ -1,224 +1,81 @@
 
-# IR sensor, AI 객체탐지 challenge
-IR sensor dataset을 AI 객체 탐지하는 [challenge](https://www.hscaichallenge.com/)의 솔루션.
-최종 리더보드 기준 1st place score
-![score](./docs/image2.png)
-
-weight와 dataset의 다운받을 수 있으며, 이를 이용하면 아래의 과정을 순서대로 진행하지 않고 각각 단계를 독립적으로 테스트해볼수 있음.
+# Lidar sensor, edge-infra 3D 객체탐지 challenge
+Lidar dataset을 이용하여  3D 객체 탐지하는 [challenge](https://www.auto-dna.org/page/?M2_IDX=32625)의 솔루션.
+최종 리더보드 기준 3rd place score
 
 ## 환경세팅
-1. Docker사용(권장)
+**도커 혹은 conda, 둘중 하나를 이용해서 환경세팅**
+-  Docker사용(권장)
 ```bash
 cd docker_script
 ./make_image.sh # 도커 이미지 생성
 ./run_image.sh # 컨테이너 생성
 
-cd /home/{IR_detection path}
-
-cd mmdetection && pip install -e . && cd ..
-cd mmyolo && pip install -e . && cd ..
-
+cd python setup.py develop
 ```
 
-2. Conda 환경
+- Conda 사용
 ```bash
-sudo apt-get install -y libxrender-dev libxext6 libsm6 ffmpeg git ninja-build libglib2.0-0 cmake
-git clone https://github.com/ies0411/IR_detection.git
-cd IR_detection
+apt-get install -y git zip build-essential cmake libssl-dev python3-dev  python3-pip python3-pip cmake ninja-build git wget ca-certificates ffmpeg libsm6 libxext6
+
+git clone https://github.com/ies0411/dna_edge.git
+cd DNA_challenge
 
 conda env create -f environment.yml
-conda activate ir_env
+conda activate dna
+
 pip install -r requirements.txt
-mim install --no-cache-dir "mmengine>=0.6.0" "mmcv>=2.0.0rc4,<2.1.0" "mmdet>=3.0.0,<4.0.0"
-
-cd mmdetection && pip install -e . && cd ..
-cd mmyolo && pip install -e . && cd ..
-
+python setup.py develop
 ```
-## folder-tree
-weight와 dataset, 소스코드을 다운받아서 아래와 같이 dataset과 weight의 폴더 위치를 구성함
-![folder tree](./docs/image.png)
+## Preparing Dataset
+1. [Datasets](https://nanum.etri.re.kr/share/kimjy/3DMODInfraAIchallenge2024?lang=ko_KR)에서 lidar dataset(edge case)를 다운.
+2. 폴더트리는 아래의 그림과 같아야함
+<p align="left">
+  <img src="./docs/folder_tree.png" alt="Preparing Dataset" width="200">
+</p>
 
-### 다운로드 링크
-- [Datasets](https://drive.google.com/drive/folders/1vp1iHQp3Z4NPxmNMKlu0dyp4ZU6xN1ik?usp=sharing)
-- [weights](https://drive.google.com/drive/folders/1r7GNUqZE6Biy0Z84dUCKnO_6TrwV9vCj?usp=sharing)
-- [output](https://drive.google.com/drive/folders/1a0JRH5OmojIlM5VV7ljROVux-V64pTxD?usp=sharing)
-- [submit_output](https://drive.google.com/drive/folders/1w2hBoYU-hfuvDyaEIXarFy6Zg_Qb3RT1?usp=sharing)
-- [모든 파일 한번에 받기(권장)](https://drive.google.com/file/d/1A8BSVQO0BqqLF2mOaoIsaUMRMZNQLi_R/view?usp=sharing)
-
-** 폴더 트리와 구글드라이브의 파일이름 을 참고하여, 파일의 위치와 파일,폴더,pth이름은 동일해야함 그렇지않으면 런타임에러발생**
-
-## Preprocessing data
-tools/combine_dataset.ipynb 의 모든 셀을 순차대로 실행하여 train/val의 데이터셋을 합침
-baseline모델을 선정후에는 train/val의 모든 데이터를 학습용 데이터로 함 -> submit제출 횟수의 제한이 없기에 가능
-
-## Train launcher
-yolox training 실행
+3. pkl파일로 변환
 ```bash
-cd launcher
-./train_yolox.sh
-```
-
-ppyoloe training 실행
-```bash
-cd launcher
-./train_ppyoloe.sh
-```
-
-codetr(resnet101) training 실행
-```bash
-cd launcher
-./train_codetr_resnet.sh
+python -m pcdet.datasets.custom.custom_dataset create_custom_infos tools/cfgs/dataset_configs/custom_dataset.yaml ./datasets
 ```
 
 
-codetr(swin) training 실행
-```bash
-cd launcher
-./train_codetr_swin.sh
-```
-
-## pseudo labeling(co-detr model only)
-extra dataset을 pseudo labeling작업을 통해 training data로 편입
-
-앞서 training을 통해 학습시킨 co-detr(swin)모델을 이용해서 아래 코드를 실행시켜 extra dataset을 만듬
-```bash
-extra_data_pseudo_label.ipynb
-```
--  모든 셀 수행, checkpoints경로를 앞서 training을 통해 나온 최종 pth로 설정한다. 그리고 500개의 extra data를 추가해서 학습을 진행하서면 개선된 모델 weight로 다시 pseudo label을 생성한다. extra data의 개수도 500개씩 점진적으로 늘린다.
+## Train
+1. baseline model tranining
+(scratch부터 학습을 수행)
 
 ```bash
-combine_pseudo_data.ipynb
-```
--  pseudo labeling을 기존의 dataset의 annotation에 합치는 코드이며 모든 셀을 실행시킨다.
-
-pseudo label을 통해 extra data를 추가하면 다시 아래의 script를 통해 추가 학습을 진행하며 이를 반복함
-
-codetr(resnet101) pseudo label을 포함한 train 실행
-```bash
-cd launcher
-./train_codetr_resnet2.sh
-```
-
-
-codetr(swin) pseudo label을 포함한 train 실행
-```bash
-cd launcher
-./train_codetr_swin2.sh
-```
-
-이를 반복함 (리소스의 한계로 최대 pseudo label을 점진적으로 증가시켜 1500개까지만 사용하였음)
-
-### 참고
-codetr(swin)의 pretrained model을 만드는 과정
-```bash
-cd mmdetection
-python train.py projects/configs/codino/pretrained_swin.py
-```
-extra dataset들을 더 추가해서 학습을 진행하였고 backbone의 weight들에 가중치를 부여하고 epoch가 진행될때 마다 점점 가중치를 줄여가서 학습을 진행
-
-
-## Inference launcher
-### yolox
-- 최종 학습된 model weight 사용해서 base scale과 tta를 적용한 두개의 inference 결과 출력
-```bash
-cd launcher
-./inference_yolox.sh
-```
-
-### ppyoloe
-- 최종 학습된 model weight 사용해서 base scale과 tta를 적용한 두개의 inference 결과 출력
-```bash
-cd launcher
-./inference_ppyoloe.sh
-```
-
-### codetr(resnet101) 실행
-- pseudo label을 사용하지 않은 model weight 통해 base scale과 tta를 적용한 두개의 inference 결과
-- pseudo label(1500)을 사용한 model weight 통해 base scale과 tta를 적용한 두개의 inference 결과
-- 총 4개의 inference 결과
-```bash
-cd launcher
-./inference_codetr_resnet.sh
-```
-
-### codetr(swin) 실행
-- pseudo label을 사용하지 않은 model weight 통해 base scale과 tta를 적용한 두개의 inference 결과
-- pseudo label(500개)을 사용한 model weight 통해 base scale과 tta를 적용한 두개의 inference 결과
-- pseudo label(1500개)을 사용한 model weight 통해 multi-scale 를 적용한 4개의 inference 결과
-- 총 8개의 inference 결과
-
-```bash
-cd launcher
+cd tools/
 ./inference_codetr_swin.sh
 ```
+1. 1번을 통해 학습된 baseline model을 augmentation을 적용하여 추가학습
+(1번의 과정을 생략하고 싶다면 아래의 링크를 동해 weight를 다운받아서 실행)
+```bash
+cd tools/
+./inference_codetr_swin.sh
+```
+## Test(Inference)
+**Traning을 생략하고 바로 Test를 수행하고 싶으면 아래 링크를 통해 최종 weight다운로드**
 
-## Ensemble
-최종 submit결과 (모델 각각의 results를 다운받으면 단독으로 실행 가능)
-
-inference launcher를 통해 output 폴더에 다양한 모델의 multi-sie 또는 tta를 적용한 inference결과가 저장됨 -> WBF를 통해 앙상블을 진행 -> submit_output폴더에 최종 submit형식의 txt파일이 생성
 
 ```bash
 cd tools
-python3 ensemble.py
+
+python test.py --cfg_file ./cfgs/my_models/pv_rcnn_plus_augmentation.yaml --data_path ../../datasets/ --ckpt ../weights/final.pth  --work_dir /home/eslim/test/
 ```
+
+## Log
+Evaluation Hook을 이용한 매 epoch마다 validation set의 mAP 결과
+![log](./docs/eval.png)
+
 
 ## Ref
-mmdetection
+openpcdet
 ```bash
-@article{mmdetection,
-  title   = {{MMDetection}: Open MMLab Detection Toolbox and Benchmark},
-  author  = {Chen, Kai and Wang, Jiaqi and Pang, Jiangmiao and Cao, Yuhang and
-             Xiong, Yu and Li, Xiaoxiao and Sun, Shuyang and Feng, Wansen and
-             Liu, Ziwei and Xu, Jiarui and Zhang, Zheng and Cheng, Dazhi and
-             Zhu, Chenchen and Cheng, Tianheng and Zhao, Qijie and Li, Buyu and
-             Lu, Xin and Zhu, Rui and Wu, Yue and Dai, Jifeng and Wang, Jingdong
-             and Shi, Jianping and Ouyang, Wanli and Loy, Chen Change and Lin, Dahua},
-  journal= {arXiv preprint arXiv:1906.07155},
-  year={2019}
-}
-```
-
-mmyolo
-```bash
-@misc{mmyolo2022,
-    title={{MMYOLO: OpenMMLab YOLO} series toolbox and benchmark},
-    author={MMYOLO Contributors},
-    howpublished = {\url{https://github.com/open-mmlab/mmyolo}},
-    year={2022}
-}
-```
-
-roboflow IR data
-```bash
-@misc{
-v7-zupa6_dataset,
-title = { v7 Dataset },
-type = { Open Source Dataset },
-author = { hossam },
-howpublished = { \url{ https://universe.roboflow.com/hossam-xkzry/v7-zupa6 } },
-url = { https://universe.roboflow.com/hossam-xkzry/v7-zupa6 },
-journal = { Roboflow Universe },
-publisher = { Roboflow },
-year = { 2023 },
-month = { jan },
-note = { visited on 2024-09-27 },
-}
-```
-
-roboflow IR data
-```bash
-@misc{
-v7-zupa6_dataset,
-title = { v7 Dataset },
-type = { Open Source Dataset },
-author = { hossam },
-howpublished = { \url{ https://universe.roboflow.com/hossam-xkzry/v7-zupa6 } },
-url = { https://universe.roboflow.com/hossam-xkzry/v7-zupa6 },
-journal = { Roboflow Universe },
-publisher = { Roboflow },
-year = { 2023 },
-month = { jan },
-note = { visited on 2024-09-27 },
+@misc{openpcdet2020,
+    title={OpenPCDet: An Open-source Toolbox for 3D Object Detection from Point Clouds},
+    author={OpenPCDet Development Team},
+    howpublished = {\url{https://github.com/open-mmlab/OpenPCDet}},
+    year={2020}
 }
 ```

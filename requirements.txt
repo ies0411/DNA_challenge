@@ -1,7 +1,6 @@
 numpy
 llvmlite
 numba
-torch>=1.1
 tensorboardX
 easydict
 pyyaml
@@ -11,3 +10,11 @@ torchvision
 SharedArray
 opencv-python
 pyquaternion
+kornia==0.6.8
+wandb
+natsort
+nuscenes-devkit==1.0.5
+av2
+waymo-open-dataset-tf-2-11-0==1.6.1
+torch-scatter -f https://data.pyg.org/whl/torch-2.0.0+cu118.html
+numpy --upgrade

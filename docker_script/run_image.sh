@@ -4,7 +4,7 @@
 COMMAND=bash
 NUM_WORKERS=$(nvidia-smi -L | wc -l)
 PORT=$(( ${RANDOM} % 9000 + 1000 ))
-IMAGE_NAME=dna_edge
+IMAGE_NAME=dna
 IMAGE_NAME_=${IMAGE_NAME//\//_}
 IMAGE_NAME_=${IMAGE_NAME_//:/_}
 HOST_NAME=$(cat /etc/hostname)

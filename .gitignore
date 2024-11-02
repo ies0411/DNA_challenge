@@ -11,3 +11,6 @@ wandb/
 datasets/
 output/
 work_dir/
+*.pth
+*.so
+**.so**
