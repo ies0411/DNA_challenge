@@ -33,8 +33,8 @@ DATA_CONFIG:
     DATA_AUGMENTOR:
         DISABLE_AUG_LIST: ['placeholder']
         MIX:
-        # 'mix_up','cut_mix'
-            NAME_LIST: []
+        #
+            NAME_LIST: ['mix_up','cut_mix']
             COLLISION_DETECTION: True
             ALPHA: 2
             PROB: 0.1
@@ -355,14 +355,14 @@ OPTIMIZATION:
     NUM_EPOCHS: 35
 
     OPTIMIZER: adam_onecycle
-    LR: 0.0005
+    LR: 0.001
     WEIGHT_DECAY: 0.001
     MOMENTUM: 0.9
 
     MOMS: [0.95, 0.85]
     PCT_START: 0.4
     DIV_FACTOR: 10
-    DECAY_STEP_LIST: [5, 10,15,20,25,30]
+    DECAY_STEP_LIST: [5, 10 , 20]
     LR_DECAY: 0.1
     LR_CLIP: 0.0000001
 

@@ -163,18 +163,10 @@ def main():
                 "pred_labels": pred_dict["pred_labels"],
                 "frame_id": frame_id,
             }
-            print(det_anno)
             det_annos.append(det_anno)
-            exit()
     with open(save_filename, "wb") as f:
         pickle.dump(det_annos, f)
 
 
 if __name__ == "__main__":
     main()
-
-
-# python test.py --cfg_file ./cfgs/custom_models/dsvt_deep.yaml --ckpt /mnt/nas-1/eslim/workspace/dna_edge/dsvt_deep_2/ckpt/checkpoint_epoch_24.pth
-# --data_path /mnt/nas-1/eslim/Data/dna/edge/custom/  --work_dir /mnt/nas-1/eslim/workspace/dna_edge/results/test
-
-# python test.py --cfg_file ./cfgs/my_models/pv_rcnn_plus_augmentation.yaml --ckpt ../../ckpt/checkpoint_epoch_19.pth --work_dir /home/eslim/test/ --data_path ../datasets/
