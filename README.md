@@ -48,7 +48,7 @@ python -m pcdet.datasets.custom.custom_dataset create_custom_infos tools/cfgs/da
 cd tools/
 ./inference_codetr_swin.sh
 ```
-1. 1번을 통해 학습된 baseline model을 augmentation을 적용하여 추가학습
+2. 1번을 통해 학습된 baseline model을 augmentation을 적용하여 추가학습
 (1번의 과정을 생략하고 싶다면 아래의 링크를 동해 weight를 다운받아서 실행)
 ```bash
 cd tools/
