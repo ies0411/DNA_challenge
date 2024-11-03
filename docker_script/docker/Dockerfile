@@ -16,7 +16,7 @@ RUN pip install --user  llvmlite numba opencv-python tensorboardX easydict pyyam
     open3d wandb natsort mayavi  av2 waymo-open-dataset-tf-2-11-0==1.6.1
 
 RUN python3 -m pip install --user jupyter
-RUN mkdir /opt/lib && cd /opt/lib && git clone https://github.com/subhadarship/kmeans_pytorch && cd kmeans_pytorch && pip install --editable .
+RUN mkdir /opt/lib && cd /opt/lib && git clone https://github.com/subhadarship/kmeans_pytorch && cd kmeans_pytorch && pip install --user --editable .
 
 RUN pip install --user torch-scatter -f https://data.pyg.org/whl/torch-2.0.0+cu118.html
 RUN pip install --user --upgrade numpy
