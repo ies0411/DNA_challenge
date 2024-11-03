@@ -12,6 +12,7 @@ cd docker_script
 ./run_image.sh # 컨테이너 생성
 
 cd python setup.py develop
+cd /home/{PATH TO DNA_CHALLENGE}
 ```
 
 - Conda 사용

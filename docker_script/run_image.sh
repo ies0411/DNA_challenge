@@ -7,7 +7,6 @@ PORT=$(( ${RANDOM} % 9000 + 1000 ))
 IMAGE_NAME=dna
 IMAGE_NAME_=${IMAGE_NAME//\//_}
 IMAGE_NAME_=${IMAGE_NAME_//:/_}
-HOST_NAME=$(cat /etc/hostname)
 GPUS_ARGS="--gpus all"
 
 while [[ "$#" -gt 0 ]]; do
@@ -28,12 +27,8 @@ fi
 
 docker run --ipc=host --shm-size=8gb --pid=host \
         ${DOCKER_ARGS} \
-        -e HOST_NAME=${HOST_NAME} \
-        -v /mnt:/mnt \
-        -v /mnt/disk2/tmp/models:/opt/models \
         -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
         -v ${HOME}:${HOME} \
         ${GPUS_ARGS} \
-        -p 4${PORT}:8888 \
-        --name "eslim".${IMAGE_NAME_}.${PORT} \
+        --name {IMAGE_NAME_}.${PORT} \
         ${IMAGE_NAME} ${COMMAND}

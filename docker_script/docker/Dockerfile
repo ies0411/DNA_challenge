@@ -20,6 +20,3 @@ RUN mkdir /opt/lib && cd /opt/lib && git clone https://github.com/subhadarship/k
 
 RUN pip install --user torch-scatter -f https://data.pyg.org/whl/torch-2.0.0+cu118.html
 RUN pip install --user --upgrade numpy
-# ENV DET=/opt/dec
-# RUN git clone https://github.com/open-mmlab/OpenPCDet.git /opt/dec
-# RUN python3 -m pip install --user -e /opt/dec
