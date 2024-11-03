@@ -354,7 +354,7 @@ MODEL:
 
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 4
+    BATCH_SIZE_PER_GPU: 1
     NUM_EPOCHS: 35
 
     OPTIMIZER: adam_onecycle
@@ -381,5 +381,5 @@ HOOK:
     #     DISABLE_AUG_LIST: ['gt_sampling','random_world_flip','random_world_rotation','random_world_scaling', 'random_world_translation']
     #     NUM_LAST_EPOCHS: 3
 
-    EvalutationHook:
-        Interval: 1
+    # EvalutationHook:
+        # Interval: 1
