@@ -17,3 +17,4 @@ work_dir/
 
 
 !datasets/ImageSets/*
+!pcdet/datasets
